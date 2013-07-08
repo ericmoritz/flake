@@ -31,10 +31,10 @@ command(_S) ->
 
 correct() ->
     ?FORALL(
-       Cmds, commands(?MODULE),
+       Cmds, parallel_commands(?MODULE),
        begin
 	   restart(flake),
-	   {History, State, Result} = run_commands(?MODULE, Cmds),
+	   {History, State, Result} = run_parallel_commands(?MODULE, Cmds),
 	   ?WHENFAIL(
 	      io:format("History: ~p~nState: ~p~nResult: ~p~n", [History, State, Result]),
 	      Result =:= ok
