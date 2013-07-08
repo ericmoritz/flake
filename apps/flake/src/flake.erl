@@ -39,7 +39,7 @@ start_link() ->
 %% @spec start() -> ok
 %% @doc Start the snowflake server.
 start() ->
-    application:start(flake).
+    ensure_started(flake).
 
 %% @spec stop() -> ok
 %% @doc Stop the snowflake server.
@@ -52,3 +52,20 @@ get_config_value(Key, Default) ->
 	{ok, Value} -> Value;
 	_ -> Default
     end.
+
+%%====================================================================
+%% Internal functions
+%%====================================================================
+ensure_started(App) ->
+    case application:start(App) of
+	{error, {not_started, Dep}} ->
+	    ok = ensure_started(Dep),
+	    ensure_started(App);
+	{error, {already_started,_}} ->
+	    ok;
+	E={error, _} ->
+	    E;
+	ok ->
+	    ok
+    end.
+
